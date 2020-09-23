@@ -68,7 +68,7 @@
             </tr>
           </table>
           <p>
-            <el-button @click="updata"></el-button>
+            <el-button @click="updata">更新</el-button>
           </p>
         </form>
       </div>
@@ -97,28 +97,33 @@ export default {
   methods:{
     getEmp(id){
       this.$axios({
-        url:"http://127.0.0.1:8000/ems_app/emp/"+id+"",
+        url:"http://127.0.0.1:8000/ems_app/emp/"+id+"/",
         method: "get",
       }).then(response=>{
+        console.log(response.data)
         let data = response.data.results;
         this.emp_id = data.id;
         this.emp_name = data.emp_name;
         this.emp_age = data.age;
         this.emp_img = data.img;
         this.emp_salary = data.salary;
+      }).catch(error=>{
+        this.$message.error("获取失败")
       })
-    },
-    created(){
-      let emp_id = this.$route.params.id;
-      this.getEmp(emp_id);
     },
     updata(){
       let emp_file = this.$refs.img.files[0];
       let formData = new FormData();
+      console.log(emp_file)
       formData.append("emp_name", this.emp_name);
       formData.append("salary", this.emp_salary);
       formData.append("age", this.emp_age);
-      formData.append("img", emp_file);
+      if (emp_file){
+        formData.append("img", emp_file);
+      }else {
+        formData.append("img", this.emp_img);
+      }
+
       console.log(formData);
       this.$axios({
         url:"http://127.0.0.1:8000/ems_app/emp/"+this.emp_id+"/",
@@ -128,7 +133,6 @@ export default {
           "content-type": "multipart/form-data"
         },
       }).then(response => {
-        console.log(response.data);
         this.emp_list = response.data.results;
         if (response.data.message) {
           this.$message({
@@ -137,14 +141,19 @@ export default {
             duration: 1000,
             showClose: true,
           });
-          // 跳转到列表页
+          // 跳转到员工首页
           this.$router.push("/index");
         }
       }).catch(error => {
         console.log(error.message);
       })
     }
-    }
+  },
+  created(){
+    let emp_id = this.$route.params.id;
+    this.getEmp(emp_id);
+  }
+
 
 }
 </script>

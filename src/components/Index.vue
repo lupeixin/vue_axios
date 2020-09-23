@@ -92,7 +92,8 @@ export default {
             type: 'success',
             duration: 1000,
             showClose: true,
-          })
+          });
+          this.findALLEmp();
         } else {
           this.$message.error("删除失败")
         }

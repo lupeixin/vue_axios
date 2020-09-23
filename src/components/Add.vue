@@ -106,7 +106,6 @@ export default {
       }).then(response => {
         console.log(response.data);
         if (response.data.message) {
-
           this.$message({
             message: '恭喜你，添加成功',
             type: 'success',
